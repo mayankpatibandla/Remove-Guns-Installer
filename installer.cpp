@@ -41,8 +41,9 @@ void download_file(const std::string &url, const std::string &outfilename) {
 int main(int argc, char *argv[]) {
   std::cout << "Installer for Remove-Guns and UniMixins" << std::endl;
 
-  fs::path outdir = fs::path(std::getenv("USERPROFILE")) /
-                    "AppData\\Roaming\\minecraftedu"; // Default
+  fs::path outdir =
+      fs::path(std::getenv("USERPROFILE")) /
+      "AppData\\Roaming\\minecraftedu\\minecraft\\mods\\1.7.10"; // Default
   if (argc >= 2) {
     outdir = argv[1]; // Use filesystem path
   }
@@ -59,9 +60,9 @@ int main(int argc, char *argv[]) {
       "https://github.com/LegacyModdingMC/UniMixins/releases/download/0.1.17/"
       "unimixins-all-1.7.10-0.1.17.jar";
 
-  download_file(removeguns_url, outdir.string() + "\\removeguns-1.0.0.jar");
+  download_file(removeguns_url, outdir.string() + "\\\\removeguns-1.0.0.jar");
   download_file(unimixins_url,
-                outdir.string() + "\\unimixins-all-1.7.10-0.1.17.jar");
+                outdir.string() + "\\\\unimixins-all-1.7.10-0.1.17.jar");
 
   return 0;
 }
