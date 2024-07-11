@@ -1,13 +1,10 @@
-// $outdir = $args[0]
-// $removeguns_url =
-// "https://github.com/mayankpatibandla/Remove-Guns/releases/download/1.0.0/removeguns-1.0.0.jar"
-// $unimixins_url =
-// "https://github.com/LegacyModdingMC/UniMixins/releases/download/0.1.17/+unimixins-all-1.7.10-0.1.17.jar"
-
 #include "vcpkg/packages/curl_x64-windows/include/curl/curl.h"
+#include "windows.h"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <stdlib.h>
+#include <windows.h>
 
 namespace fs = std::filesystem;
 
@@ -25,6 +22,8 @@ void download_file(const std::string &url, const std::string &outfilename) {
   CURLcode res;
   curl = curl_easy_init();
   if (curl) {
+    fs::create_directories(fs::path(outfilename).parent_path());
+
     fp = fopen(outfilename.c_str(), "wb");
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
@@ -33,17 +32,21 @@ void download_file(const std::string &url, const std::string &outfilename) {
     /* always cleanup */
     curl_easy_cleanup(curl);
     fclose(fp);
+  } else {
+    std::cout << "Error: Could not initialize curl" << std::endl;
+    std::cerr << "Error: Could not initialize curl" << std::endl;
   }
 }
 
 int main(int argc, char *argv[]) {
   std::cout << "Installer for Remove-Guns and UniMixins" << std::endl;
-  if (argc < 2) {
-    std::cout << "Usage: " << argv[0] << " <output_directory>" << std::endl;
-    return 1;
+
+  fs::path outdir = fs::path(std::getenv("USERPROFILE")) /
+                    "AppData\\Roaming\\minecraftedu"; // Default
+  if (argc >= 2) {
+    outdir = argv[1]; // Use filesystem path
   }
 
-  fs::path outdir = argv[1]; // Use filesystem path
   // Check if outdir is a file
   if (fs::is_regular_file(outdir)) {
     outdir = outdir.parent_path(); // Use the parent directory if it's a file
